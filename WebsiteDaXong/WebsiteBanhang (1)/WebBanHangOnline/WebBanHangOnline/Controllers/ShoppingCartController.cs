@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -92,6 +93,7 @@ namespace WebBanHangOnline.Controllers
                         Quantity = x.Quantity,
                         Price = x.Price
                     }));
+                    order.Quantity = cart.GetTotalQuantity();
                     order.TotalAmount = cart.Items.Sum(x => (x.Price * x.Quantity));
                     order.TypePayment = req.TypePayment;
                     order.CreatedDate = DateTime.Now;
@@ -114,7 +116,15 @@ namespace WebBanHangOnline.Controllers
                         strSanPham += "<td>" + WebBanHangOnline.Common.Common.FormatNumber(sp.TotalPrice, 0) + "</td>";
                         strSanPham += "</tr>";
                         thanhtien += sp.Price * sp.Quantity;
+                        var product = db.Products.Find(sp.ProductId);
+                        if (product != null)
+                        {
+                            product.Quantity -= sp.Quantity;
+                            db.Entry(product).State = EntityState.Modified;
+                        }
                     }
+                    db.SaveChanges();
+                
                     TongTien = thanhtien;
                     string contentCustomer = System.IO.File.ReadAllText(Server.MapPath("~/Content/templates/send2.html"));
                     contentCustomer = contentCustomer.Replace("{{MaDon}}", order.Code);
