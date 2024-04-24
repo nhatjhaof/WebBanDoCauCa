@@ -66,6 +66,7 @@
                         <h2>@Model.Title</h2>
                         <p>@Model.Description</p>
                         <p>Lượt xem: <b>@Model.ViewCount</b></p>
+                        <p id="quantity_product" style="display:none;">@Model.Quantity</p>
                     </div>
                     @if (Model.PriceSale > 0)
                     {
@@ -225,4 +226,44 @@
 }
 @section scripts{
     <script src="~/Content/assets/js/single_custom.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Lấy tham chiếu đến nút "Thêm vào giỏ hàng"
+            var addToCartButton = document.querySelector('.btnAddToCart');
+
+            // Thêm sự kiện click cho nút
+            addToCartButton.addEventListener('click', function (event) {
+                event.preventDefault(); // Ngăn chặn hành động mặc định của nút (nếu có)
+ 
+                // Lấy giá trị của quantity_value và chuyển đổi sang số nguyên
+                var quantityValue = parseInt(document.getElementById('quantity_value').innerText);
+                var quantityProduct = parseInt(document.getElementById('quantity_product').innerText);
+
+
+                // Kiểm tra nếu quantity_value lớn hơn Model.Quantity
+                if (quantityValue > quantityProduct) {
+                    // Hiển thị thông báo lỗi
+                    alert("Số lượng bạn muốn mua vượt quá số lượng hiện có trong kho.");
+                } else {
+                    //alert(id + " " + quatity);
+                    var id = addToCartButton.getAttribute('data-id');
+                    $.ajax({
+                        url: '/shoppingcart/addtocart',
+                        type: 'POST',
+                        data: { id: id, quantity: quantityValue },
+                        success: function (rs) {
+                            if (rs.Success) {
+                                $('#checkout_items').html(rs.Count);
+                                alert(rs.msg);
+                                window.addToCartSuccess = true;
+                            }
+                        },
+                        error: function () {
+                            alert("Đã xảy ra lỗi khi thêm sản phẩm vào giỏ hàng.");
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 }

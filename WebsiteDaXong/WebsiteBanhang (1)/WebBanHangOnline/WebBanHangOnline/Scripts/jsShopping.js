@@ -1,6 +1,6 @@
 ﻿$(document).ready(function () {
     ShowCount();
-    $('body').on('click', '.btnAddToCart', function (e) {
+ /*   $('body').on('click', '.btnAddToCart', function (e) {
         e.preventDefault();
         var id = $(this).data('id');
         var quatity = 1;
@@ -21,7 +21,7 @@
                 }
             }
         });
-    });
+    });*/
     $('body').on('click', '.btnUpdate', function (e) {
         e.preventDefault();
         var id = $(this).data("id");
