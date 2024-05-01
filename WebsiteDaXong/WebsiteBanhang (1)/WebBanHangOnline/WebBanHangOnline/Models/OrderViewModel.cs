@@ -14,6 +14,8 @@ namespace WebBanHangOnline.Models
         public string Phone { get; set; }
         [Required(ErrorMessage = "Địa chỉ khổng để trống")]
         public string Address { get; set; }
+        [Required(ErrorMessage = "Email khổng để trống")]
+        [EmailAddress]
         public string Email { get; set; }
         public int TypePayment { get; set; }
 
